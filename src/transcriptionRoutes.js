@@ -189,7 +189,7 @@ ${JSON.stringify(payload, null, 2)}
           duration: transcription?.duration
             ? Math.round(transcription.duration)
             : 0,
-          mood_score: analysis.moodScore,
+          mood_score: analysis.moodScore != null ? Math.round(analysis.moodScore * 100) : null,
           dominant_emotion: analysis.dominantEmotion,
           emotion_breakdown: analysis.emotionBreakdown,
           transcript: transcriptText,
