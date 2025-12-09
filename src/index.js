@@ -1,31 +1,42 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { supabase } from "./supabase.js"; // if you already created this
+import { supabase } from "./supabase.js";
 import transcriptionRoutes from "./transcriptionRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:5173",   // your Vite frontend
-  methods: ["GET", "POST"],
-}));
+// ✅ FIX CORS FOR VERCEL + RENDER
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://minutes-nine.vercel.app",
+      "https://minutes-44cdr708d-paavans-projects-cea0dbfb.vercel.app",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
-
-// optional: test supabase connection here if you want
-// ...
 
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok", message: "Backend is running 🚀" });
 });
 
-// Mount transcription routes under /api
+// Root check (optional but helpful)
+app.get("/", (req, res) => {
+  res.send("Minutes Backend is live on Render 🚀");
+});
+
+// Routes
 app.use("/api", transcriptionRoutes);
 
+// Render dynamic OR local port
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
