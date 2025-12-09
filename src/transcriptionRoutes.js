@@ -174,25 +174,29 @@ ${JSON.stringify(payload, null, 2)}
     //
     // 4️⃣ CREATE MEETING RECORD
     //
-    const meetingTitle = req.file.originalname || "Audio Upload";
+    // 1) Insert meeting row
+    const { data: meetingRow, error: meetErr } = await supabase
+    .from("meetings")
+    .insert([
+        {
+        title: req.body.title || "Untitled Meeting",
+        meeting_type: req.body.meeting_type || "generic",
+        duration: whisper.duration ? Math.round(whisper.duration) : 0,
+        mood_score: analysis.moodScore,
+        dominant_emotion: analysis.dominantEmotion,
+        emotion_breakdown: analysis.emotionBreakdown,
+        transcript: whisper.text,
+        cloud_path: null
+        }
+    ])
+    .select()
+    .single();
 
-    const { data: meetingRow, error: meetingErr } = await supabase
-      .from("meetings")
-      .insert({
-        title: meetingTitle,
-        meeting_type: "generic",
-        duration: Math.round(transcription.duration || 0),
-        mood_score: moodScore,
-        dominant_emotion: dominantEmotion,
-        emotion_breakdown: emotionBreakdown,
-      })
-      .select()
-      .single();
-
-    if (meetingErr) {
-      console.error("❌ Supabase insert error:", meetingErr);
-      throw new Error("Failed to create meeting record");
+    if (meetErr || !meetingRow) {
+    console.error("❌ Supabase meeting insert failed:", meetErr);
+    return res.status(500).json({ error: "Failed to create meeting record" });
     }
+
 
     const meetingId = meetingRow.id;
     console.log("✔ Meeting created:", meetingId);
