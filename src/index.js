@@ -9,17 +9,13 @@ dotenv.config();
 const app = express();
 
 // ✅ FIX CORS FOR VERCEL + RENDER
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://minutes-nine.vercel.app",
-      "https://minutes-44cdr708d-paavans-projects-cea0dbfb.vercel.app",
-    ],
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://minutes-44cdr708d-paavans-projects-cea0dbfb.vercel.app"
+  ],
+  methods: ["GET", "POST"],
+}));
 
 app.use(express.json());
 
