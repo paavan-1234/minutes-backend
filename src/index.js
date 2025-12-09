@@ -8,14 +8,22 @@ dotenv.config();
 
 const app = express();
 
-// ✅ FIX CORS FOR VERCEL + RENDER
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://minutes-44cdr708d-paavans-projects-cea0dbfb.vercel.app"
-  ],
-  methods: ["GET", "POST"],
-}));
+
+// ✅ Replace your old CORS block with THIS
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",                                      // Local dev
+      "https://minutes-8evpqetxk-paavans-projects-cea0dbfb.vercel.app"  // Your Vercel URL
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// Required for preflight OPTIONS requests
+app.options("*", cors());
+
 
 app.use(express.json());
 
